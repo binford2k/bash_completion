@@ -1,0 +1,52 @@
+#! /bin/bash
+
+_puppet_certnames()
+{
+    if [ -d /etc/puppetlabs ]
+    then
+      inventory='/etc/puppetlabs/puppet/ssl/ca/inventory.txt'
+    else
+      inventory='/etc/puppet/ssl/ca/inventory.txt'
+    fi
+
+    echo $(awk -F '=' '/CN=/{print $NF}' "${inventory}" | grep -v 'Puppet CA' | grep -v 'pe-internal')
+}
+
+_puppet_cert_options()
+{
+    opts="clean fingerprint generate list print revoke sign verify"
+
+    if [[ $opts =~ $1 ]]
+    then
+        certnames=$(_puppet_certnames)
+        COMPREPLY=( $(compgen -W "${certnames} --all" -- ${cur}) )
+    else
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    fi
+
+    return 0
+}
+
+_puppet_subcommands()
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    action="${COMP_WORDS[1]}"
+
+    case "${action}" in
+      cert)
+        _puppet_cert_options $prev
+        return 0
+        ;;
+      *)
+        ;;
+    esac
+
+    opts=$(puppet help | grep '^  \w*\b' | awk '{print $1}')
+    COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+    return 0
+}
+complete -F _puppet_subcommands puppet
+
