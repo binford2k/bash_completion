@@ -2,7 +2,7 @@
 
 _puppet_certnames()
 {
-    inventory=`puppet master --configprint cert_inventory`
+    inventory=$(puppet master --configprint cert_inventory)
     echo $(awk -F '=' '/CN=/{print $NF}' "${inventory}" | grep -v 'Puppet CA' | grep -v 'pe-internal')
 }
 
