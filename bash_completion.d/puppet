@@ -2,13 +2,7 @@
 
 _puppet_certnames()
 {
-    if [ -d /etc/puppetlabs ]
-    then
-      inventory='/etc/puppetlabs/puppet/ssl/ca/inventory.txt'
-    else
-      inventory='/etc/puppet/ssl/ca/inventory.txt'
-    fi
-
+    inventory=`puppet master --configprint cert_inventory`
     echo $(awk -F '=' '/CN=/{print $NF}' "${inventory}" | grep -v 'Puppet CA' | grep -v 'pe-internal')
 }
 
