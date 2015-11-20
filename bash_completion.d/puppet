@@ -38,7 +38,42 @@ _puppet_subcommands()
         ;;
     esac
 
-    opts=$(puppet help | grep '^  \w*\b' | awk '{print $1}')
+#    opts=$(puppet help | grep '^  \w*\b' | awk '{print $1}')
+    opts="agent
+apply
+ca
+catalog
+cert
+certificate
+certificate_request
+certificate_revocation_list
+config
+describe
+device
+doc
+facts
+file
+filebucket
+help
+inspect
+instrumentation_data
+instrumentation_listener
+instrumentation_probe
+key
+kick
+man
+master
+module
+node
+parser
+plugin
+queue
+report
+resource
+resource_type
+secret_agent
+status"
+
     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
     return 0
 }
