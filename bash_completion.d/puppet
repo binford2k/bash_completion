@@ -69,12 +69,11 @@ _puppet_subcommands()
 
 mkdir -p $CACHE
 
-puppet describe --list | awk '{print $1}'        > "${CACHE}/types" &
+puppet describe --list | awk '{print $1}'        > "${CACHE}/types.new"    && mv -f "${CACHE}/types.new" "${CACHE}/types" &
 disown
-puppet help | grep '^  \w*\b' | awk '{print $1}' > "${CACHE}/commands" &
+puppet help | grep '^  \w*\b' | awk '{print $1}' > "${CACHE}/commands.new" && mv -f "${CACHE}/commands.new" "${CACHE}/commands" &
 disown
-puppet doc --list | awk '{print $1}'             > "${CACHE}/docs" &
+puppet doc --list | awk '{print $1}'             > "${CACHE}/docs.new"     && mv -f "${CACHE}/docs.new" "${CACHE}/docs" &
 disown
 
 complete -F _puppet_subcommands puppet
-
