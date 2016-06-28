@@ -97,6 +97,11 @@ _puppet_subcommands()
         _puppet_opts $prev
         return 0
         ;;
+      plugin)
+        COMPREPLY+=( $(compgen -W "download" -- "$cur") )
+        _puppet_opts $prev
+        return 0
+        ;;
       *)
         ;;
     esac
