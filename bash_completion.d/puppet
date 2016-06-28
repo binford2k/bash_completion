@@ -92,6 +92,11 @@ _puppet_subcommands()
         _puppet_opts $prev
         return 0
         ;;
+      parser)
+        COMPREPLY+=( $(compgen -W "validate" -- "$cur") )
+        _puppet_opts $prev
+        return 0
+        ;;
       *)
         ;;
     esac
