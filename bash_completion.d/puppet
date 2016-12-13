@@ -1,5 +1,4 @@
 #! /bin/bash
-
 CACHE="${HOME}/.cache/puppetlabs/completion"
 
 _puppet_certnames()
@@ -112,17 +111,38 @@ _puppet_subcommands()
     return 0
 }
 
-
 mkdir -p $CACHE
 
-puppet describe --list | awk '{print $1}'        > "${CACHE}/types.new"    && mv -f "${CACHE}/types.new" "${CACHE}/types" &
-disown
-puppet help | grep '^  \w*\b' | awk '{print $1}' > "${CACHE}/commands.new" && mv -f "${CACHE}/commands.new" "${CACHE}/commands" &
-disown
-puppet doc --list | awk '{print $1}'             > "${CACHE}/docs.new"     && mv -f "${CACHE}/docs.new" "${CACHE}/docs" &
-disown
-puppet config print | awk '{print "--"$1}'       > "${CACHE}/options.new"  && mv -f "${CACHE}/options.new" "${CACHE}/options" &
+(
+  if [ ! -f "${CACHE}/types.new" ]; then
+    puppet describe --list | awk '{print $1}' > "${CACHE}/types.new"
+    mv -f "${CACHE}/types.new" "${CACHE}/types"
+  fi
+) &
 disown
 
+(
+  if [ ! -f "${CACHE}/commands.new" ]; then
+    puppet help | grep '^  \w*\b' | awk '{print $1}' > "${CACHE}/commands.new"
+    mv -f "${CACHE}/commands.new" "${CACHE}/commands"
+  fi
+) &
+disown
+
+(
+  if [ ! -f "${CACHE}/docs.new" ]; then
+    puppet doc --list | awk '{print $1}' > "${CACHE}/docs.new"
+    mv -f "${CACHE}/docs.new" "${CACHE}/docs"
+  fi
+) &
+disown
+
+(
+  if [ ! -f "${CACHE}/options.new" ]; then
+    puppet config print | awk '{print "--"$1}' > "${CACHE}/options.new"
+    mv -f "${CACHE}/options.new" "${CACHE}/options"
+  fi
+) &
+disown
 
 complete -o filenames -F _puppet_subcommands puppet
